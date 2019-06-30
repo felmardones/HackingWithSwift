@@ -23,6 +23,7 @@ class DetailViewController: UIViewController {
         if let imageToLoad = imageSelected {
             imageView.image = UIImage(named: imageToLoad)
         }
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareFlag))
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -41,5 +42,19 @@ class DetailViewController: UIViewController {
         // Pass the selected object to the new view controller.
     }
     */
-
+    @objc func shareFlag(){
+        guard let imageShare = imageView.image?.jpegData(compressionQuality: 0.8) else{
+            print("image not found")
+            return
+        }
+        
+        guard let image = imageSelected else{
+            return
+        }
+        let objectToShare = [imageShare] as Any
+        let vc = UIActivityViewController(activityItems: [objectToShare,image], applicationActivities: [])
+        vc.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
+        present(vc, animated: true)
+        
+    }
 }

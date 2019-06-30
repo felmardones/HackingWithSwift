@@ -20,7 +20,7 @@ class ViewController: UITableViewController {
         let path = Bundle.main.resourcePath!
         let items = try! fm.contentsOfDirectory(atPath: path)
         for item in items{
-            if item.hasSuffix("2x.png"){
+            if item.hasSuffix(".png"){
                 flags.append(item)
             }
         }
