@@ -16,23 +16,10 @@ class ViewController: UITableViewController {
         title = "Storm Viewer"
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareApp))
-        
-        //declare a constant to access the filesystem
-        let fm = FileManager.default
-        //path to our bundle directory
-        let path = Bundle.main.resourcePath!
-        //get the content of the directory
-        let items = try! fm.contentsOfDirectory(atPath: path)
-        //look up for the files we need
-        for item in items {
-            //set the condition to only nssl images
-            if item.hasPrefix("nssl"){
-                //fill the array with nssl images
-                pictures.append(item)
-            }
+        DispatchQueue.global(qos: .background).sync { [weak self] in
+            self?.loadPictures()
         }
-        pictures.sort()
-        print(pictures)
+      
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -56,7 +43,25 @@ class ViewController: UITableViewController {
             
         }
     }
-    
+    func loadPictures(){
+        
+        //declare a constant to access the filesystem
+        let fm = FileManager.default
+        //path to our bundle directory
+        let path = Bundle.main.resourcePath!
+        //get the content of the directory
+        let items = try! fm.contentsOfDirectory(atPath: path)
+        //look up for the files we need
+        for item in items {
+            //set the condition to only nssl images
+            if item.hasPrefix("nssl"){
+                //fill the array with nssl images
+                pictures.append(item)
+            }
+        }
+        pictures.sort()
+        tableView.performSelector(onMainThread: #selector(UITableView.reloadData), with: nil, waitUntilDone: false)
+    }
     @objc func shareApp(){
         let message = "Share my app"
         let link = "https://www.hackingwithswift.com/files/100/15-wordsearch.pdf"
